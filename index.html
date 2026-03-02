@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JIBAS Mobile Smart - Hidis</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --bg: #f0f2f5;
+      --glass: rgba(255, 255, 255, 0.95);
+    }
+
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background-color: var(--bg);
+      color: #333;
+      user-select: none;
+    }
+
+    /* Animasi Transition */
+    .fade-in { animation: fadeIn 0.5s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Login Page Custom */
+    .login-container {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--glass);
+      border-radius: 25px;
+      padding: 35px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    }
+
+    /* Dashboard Header */
+    .header-profile {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 50px 20px 70px;
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .avatar-circle {
+      width: 85px;
+      height: 85px;
+      background: white;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--primary);
+      border: 4px solid rgba(255,255,255,0.3);
+    }
+
+    /* Menu Grid */
+    .menu-section {
+      margin-top: -40px;
+      padding: 0 20px;
+    }
+
+    .menu-box {
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+
+    .menu-box:active { transform: scale(0.92); background-color: #f8f9fa; }
+    
+    .menu-icon { font-size: 2.8rem; margin-bottom: 8px; display: block; }
+
+    /* List Tagihan */
+    .bill-item {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border-left: 6px solid var(--primary);
+    }
+
+    .amount { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
+    .status-pill {
+      font-size: 0.65rem;
+      padding: 5px 12px;
+      border-radius: 50px;
+      font-weight: 700;
+      background: #fff0f0;
+      color: #e63946;
+      text-transform: uppercase;
+    }
+
+    #loadingOverlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255,255,255,0.8);
+      display: none; align-items: center; justify-content: center; z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loadingOverlay"><div class="spinner-border text-primary"></div></div>
+
+<div id="app">
+  <div id="loginPage" class="login-container">
+    <div class="login-card fade-in">
+      <div class="text-center mb-4">
+        <img src="https://jibas.net/res/img/jibaslogo.png" width="60" class="mb-2">
+        <h4 class="fw-bold text-primary mb-0">JIBAS SMART</h4>
+        <p class="text-muted small">Aplikasi Monitoring Siswa</p>
+      </div>
+      <div class="mb-3">
+        <label class="form-label small fw-bold">NIS / USERNAME</label>
+        <input type="text" id="username" class="form-control form-control-lg rounded-pill border-0 shadow-sm ps-4" style="background: #f0f2f5;" placeholder="NIS Siswa">
+      </div>
+      <div class="mb-4">
+        <label class="form-label small fw-bold">PIN / PASSWORD</label>
+        <input type="password" id="password" class="form-control form-control-lg rounded-pill border-0 shadow-sm ps-4" style="background: #f0f2f5;" placeholder="PIN Siswa">
+      </div>
+      <button onclick="prosesLogin()" id="btnLogin" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg">
+        MASUK
+      </button>
+    </div>
+  </div>
+
+  <div id="mainPage" class="d-none">
+    <div class="header-profile fade-in">
+      <div class="avatar-circle"><i class="bi bi-person-fill"></i></div>
+      <h4 id="userNama" class="fw-bold mb-1">...</h4>
+      <p id="userKelas" class="small opacity-75 mb-0">Kelas: -</p>
+      <button onclick="logout()" class="btn btn-sm btn-light rounded-pill mt-3 px-3" style="font-size: 0.7rem;">LOGOUT <i class="bi bi-box-arrow-right"></i></button>
+    </div>
+    
+    <div class="menu-section">
+      <div class="row g-3">
+        <div class="col-6">
+          <div class="menu-box fade-in" onclick="showKeuangan()">
+            <span class="menu-icon">💰</span>
+            <h6 class="fw-bold mb-1">Keuangan</h6>
+            <small class="text-muted" style="font-size: 0.65rem;">Sisa Tagihan JTT</small>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="menu-box fade-in" onclick="Swal.fire('Sabar Mas', 'Menu Karakter isih digodhog.', 'info')">
+            <span class="menu-icon">🌟</span>
+            <h6 class="fw-bold mb-1">Karakter</h6>
+            <small class="text-muted" style="font-size: 0.65rem;">Rapor Sikap</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-4 mb-5 pb-5 fade-in">
+      <div id="dataDisplayArea">
+        </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  // URL GAS MAS PAIJO SING ANYAR
+  const GAS_URL = "https://script.google.com/macros/s/AKfycby0L78bvHNtrb-Xwvj0dIPaFW4ZwLPyTfsj0ThF_jYpoNAptk-qWSYeqG9O9lll8FKd/exec";
+
+  const loader = document.getElementById('loadingOverlay');
+
+  // --- 1. PROSES LOGIN ---
+  async function prosesLogin() {
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+
+    if(!user || !pass) return Swal.fire('Eits!', 'NIS & PIN diisi dhisik Mas.', 'warning');
+
+    loader.style.display = 'flex';
+    try {
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'cekLogin', username: user, password: pass })
+      });
+      const data = await response.json();
+      
+      if(data.status === 'Sukses') {
+        localStorage.setItem('user_nis', data.nis);
+        localStorage.setItem('user_nama', data.nama);
+        localStorage.setItem('user_kelas', data.kelas);
+        renderDashboard();
+      } else {
+        Swal.fire('Gagal!', 'NIS utawa PIN salah Mas.', 'error');
+      }
+    } catch (e) {
+      Swal.fire('Error!', 'Gagal hubungake neng API. Cek koneksi internet.', 'error');
+    } finally {
+      loader.style.display = 'none';
+    }
+  }
+
+  // --- 2. TAMPILAN DASHBOARD ---
+  function renderDashboard() {
+    document.getElementById('userNama').innerText = localStorage.getItem('user_nama');
+    document.getElementById('userKelas').innerText = "Kelas: " + localStorage.getItem('user_kelas');
+    document.getElementById('loginPage').classList.add('d-none');
+    document.getElementById('mainPage').classList.remove('d-none');
+    // Resik-resik area konten pas awal login
+    document.getElementById('dataDisplayArea').innerHTML = '';
+  }
+
+  // --- 3. TAMPIL DATA KEUANGAN ---
+  async function showKeuangan() {
+    const nis = localStorage.getItem('user_nis');
+    const area = document.getElementById('dataDisplayArea');
+    
+    area.innerHTML = `<div class="text-center p-4"><div class="spinner-border text-primary spinner-border-sm"></div> Narik data...</div>`;
+    
+    try {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'getKeuanganSiswa', nis: nis })
+      });
+      const result = await res.json();
+      
+      if(result.status === 'Sukses') {
+        let html = `<h6 class="fw-bold mb-3"><i class="bi bi-wallet2 me-2"></i>Rincian Tagihan</h6>`;
+        
+        if(result.data.length === 0) {
+          html += `<div class="card p-4 text-center border-0 shadow-sm rounded-4">
+                    <i class="bi bi-emoji-smile text-success display-4"></i>
+                    <p class="mt-2 mb-0">Alhamdulillah, kabeh tagihan wis Lunas!</p>
+                  </div>`;
+        } else {
+          result.data.forEach(item => {
+            html += `
+              <div class="bill-item fade-in flex-column align-items-stretch">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                  <div>
+                    <div class="small fw-bold text-dark text-uppercase" style="letter-spacing: 0.5px;">${item.item}</div>
+                    <div class="amount">Rp ${Number(item.sisa).toLocaleString('id-ID')}</div>
+                  </div>
+                  <div class="text-end">
+                    <span class="status-pill">Belum Lunas</span>
+                    <div class="text-muted mt-1" style="font-size: 0.6rem;">Awal: Rp ${Number(item.tagihan).toLocaleString('id-ID')}</div>
+                  </div>
+                </div>
+                
+                <div class="d-grid mt-3 w-100">
+                  <button onclick="bayarTagihan('${item.item}', '${item.sisa}')" class="btn btn-primary btn-sm rounded-pill fw-bold py-2 shadow-sm">
+                    <i class="bi bi-send-fill me-1"></i> BAYAR SEKARANG
+                  </button>
+                </div>
+              </div>
+            `;
+          });
+        }
+        area.innerHTML = html;
+      }
+    } catch (e) {
+      area.innerHTML = `<div class="alert alert-danger">Gagal ngundhuh data keuangan.</div>`;
+    }
+  }
+
+  // --- 4. FUNGSI BAYAR (WA KONFIRMASI) ---
+  function bayarTagihan(namaItem, sisa) {
+    const namaSiswa = localStorage.getItem('user_nama');
+    const kelas = localStorage.getItem('user_kelas');
+    const nominal = Number(sisa).toLocaleString('id-ID');
+    
+    Swal.fire({
+      title: 'Konfirmasi Bayar',
+      html: `Tagihan: <b>${namaItem}</b><br>Nominal: <b>Rp ${nominal}</b>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '<i class="bi bi-whatsapp"></i> Chat Bendahara',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#25D366'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // GANTI NOMER IKI KARO NOMER WA BENDAHARA SEKOLAHMU JO
+        const noBendahara = "6281775415317"; 
+        const pesan = `Halo Bapak/Ibu Bendahara, saya *${namaSiswa}* (Kelas ${kelas}) mau konfirmasi pembayaran *${namaItem}* sebesar *Rp ${nominal}*. Mohon informasinya.`;
+        
+        const linkWA = `https://api.whatsapp.com/send?phone=${noBendahara}&text=${encodeURIComponent(pesan)}`;
+        window.open(linkWA, '_blank');
+      }
+    });
+  }
+
+  // --- 5. LOGOUT ---
+  function logout() {
+    localStorage.clear();
+    location.reload();
+  }
+
+  window.onload = () => {
+    if(localStorage.getItem('user_nis')) renderDashboard();
+  }
+</script>
+
+</body>
+</html>
