@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jibas-finance-v1';
+const CACHE_NAME = 'jibas-finance-v2';
 const urlsToCache = [
   './',
   './index.html',
